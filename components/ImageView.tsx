@@ -34,19 +34,10 @@ const ImageView: React.FC = () => {
 
   const checkAndGenerate = async () => {
     if (!prompt.trim()) return;
-    
-    if (usePro) {
-      if (!(await (window as any).aistudio.hasSelectedApiKey())) {
-        setShowKeyPrompt(true);
-        return;
-      }
-    }
-    
     generateImage();
   };
 
   const handleOpenKeySelector = async () => {
-    await (window as any).aistudio.openSelectKey();
     setShowKeyPrompt(false);
     generateImage();
   };
@@ -59,8 +50,8 @@ const ImageView: React.FC = () => {
     setSystemError(null);
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const model = usePro ? 'gemini-3-pro-image-preview' : 'gemini-2.5-flash-image';
-      
+      const model = usePro ? 'gemini-2.0-flash-preview-image-generation' : 'gemini-2.0-flash-preview-image-generation';
+
       const contents: any = {
         parts: [{ text: finalPrompt + ", professional executive portrait, studio lighting, minimal cinematic aesthetic, high resolution" }]
       };
@@ -74,8 +65,8 @@ const ImageView: React.FC = () => {
       const response = await ai.models.generateContent({
         model: model,
         contents,
-        config: { 
-          imageConfig: { 
+        config: {
+          imageConfig: {
             aspectRatio,
             ...(usePro ? { imageSize } : {})
           },
@@ -129,7 +120,7 @@ const ImageView: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className={`flex items-center gap-2 px-3 py-1 rounded-lg border transition-premium ${usePro ? 'bg-[#13c8ec]/10 border-[#13c8ec]/30' : 'bg-white/5 border-white/5'}`}>
             <span className={`text-[9px] font-bold uppercase tracking-widest ${usePro ? 'text-[#13c8ec]' : 'text-slate-500'}`}>High-Def</span>
-            <button 
+            <button
               onClick={() => setUsePro(!usePro)}
               className={`w-8 h-4 rounded-full relative transition-premium ${usePro ? 'bg-[#13c8ec]' : 'bg-slate-700'}`}
             >
@@ -144,11 +135,10 @@ const ImageView: React.FC = () => {
               reader.readAsDataURL(file);
             }
           }} />
-          <button 
+          <button
             onClick={() => fileInputRef.current?.click()}
-            className={`px-6 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-premium border ${
-              refImage ? 'bg-[#13c8ec]/20 border-[#13c8ec]/40 text-[#13c8ec]' : 'bg-white/5 text-slate-500 border-white/5 hover:text-slate-300'
-            }`}
+            className={`px-6 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-premium border ${refImage ? 'bg-[#13c8ec]/20 border-[#13c8ec]/40 text-[#13c8ec]' : 'bg-white/5 text-slate-500 border-white/5 hover:text-slate-300'
+              }`}
           >
             {refImage ? 'Photo Loaded' : 'Add Inspiration'}
           </button>
@@ -198,31 +188,30 @@ const ImageView: React.FC = () => {
 
             <div className="space-y-4">
               <label className="text-[10px] font-bold text-slate-600 uppercase tracking-widest ml-1">Your Picture Idea</label>
-              <textarea 
+              <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="A warm, professional photo of me in a cozy library with soft lighting..."
                 className="w-full h-32 rounded-xl px-8 py-6 text-sm font-medium outline-none text-slate-200 placeholder:text-slate-800 bg-white/5"
               />
             </div>
-            
+
             <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-white/5">
               <div className="flex items-center gap-6">
                 <div className="flex gap-2">
                   {(['1:1', '4:3', '16:9'] as const).map(ratio => (
-                    <button 
+                    <button
                       key={ratio}
                       onClick={() => setAspectRatio(ratio)}
-                      className={`px-5 py-2 rounded-lg text-[10px] font-bold border transition-premium ${
-                        aspectRatio === ratio ? 'bg-[#13c8ec] border-[#13c8ec] text-[#0b1619]' : 'bg-white/5 border-white/5 text-slate-600 hover:text-slate-300'
-                      }`}
+                      className={`px-5 py-2 rounded-lg text-[10px] font-bold border transition-premium ${aspectRatio === ratio ? 'bg-[#13c8ec] border-[#13c8ec] text-[#0b1619]' : 'bg-white/5 border-white/5 text-slate-600 hover:text-slate-300'
+                        }`}
                     >
                       {ratio}
                     </button>
                   ))}
                 </div>
               </div>
-              <button 
+              <button
                 onClick={checkAndGenerate}
                 disabled={isGenerating || !prompt.trim()}
                 className="bg-[#13c8ec] hover:bg-white disabled:opacity-20 text-[#0b1619] px-10 py-3 rounded-lg transition-premium font-bold text-[11px] uppercase tracking-widest shadow-xl active:scale-95"
@@ -241,9 +230,9 @@ const ImageView: React.FC = () => {
                     <p className="text-[9px] text-[#13c8ec] font-bold uppercase tracking-widest mb-2">Portfolio Asset</p>
                     <p className="text-xs text-slate-400 italic line-clamp-2 mb-6">"{img.prompt}"</p>
                     <div className="flex gap-3">
-                       <a href={img.url} download className="flex-1 py-3 bg-[#13c8ec] text-[#0b1619] rounded-lg text-[10px] font-bold uppercase tracking-widest text-center hover:bg-white transition-premium">Save</a>
-                       <button onClick={() => handleDelete(img.id)} className="p-3 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors"><i className="fas fa-trash text-xs"></i></button>
-                       <button onClick={() => setRefImage(img.url)} className="p-3 bg-white/5 rounded-lg text-white hover:bg-[#13c8ec]/20 transition-colors"><i className="fas fa-redo-alt text-xs"></i></button>
+                      <a href={img.url} download className="flex-1 py-3 bg-[#13c8ec] text-[#0b1619] rounded-lg text-[10px] font-bold uppercase tracking-widest text-center hover:bg-white transition-premium">Save</a>
+                      <button onClick={() => handleDelete(img.id)} className="p-3 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors"><i className="fas fa-trash text-xs"></i></button>
+                      <button onClick={() => setRefImage(img.url)} className="p-3 bg-white/5 rounded-lg text-white hover:bg-[#13c8ec]/20 transition-colors"><i className="fas fa-redo-alt text-xs"></i></button>
                     </div>
                   </div>
                 </div>

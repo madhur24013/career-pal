@@ -89,7 +89,7 @@ const LiveView: React.FC = () => {
     return saved ? JSON.parse(saved) : null;
   });
   const [isInitializing, setIsInitializing] = useState(false);
-  const [connectionError, setConnectionError] = useState<{msg: string, isBlocked: boolean} | null>(null);
+  const [connectionError, setConnectionError] = useState<{ msg: string, isBlocked: boolean } | null>(null);
   const [timer, setTimer] = useState(0);
   const [statusMessage, setStatusMessage] = useState('Standby');
   const [isAudioOnly, setIsAudioOnly] = useState(false);
@@ -100,7 +100,7 @@ const LiveView: React.FC = () => {
   const frameIntervalRef = useRef<number | null>(null);
   const timerRef = useRef<number | null>(null);
   const transcriptionEndRef = useRef<HTMLDivElement>(null);
-  
+
   const audioContextRef = useRef<AudioContext | null>(null);
   const inputAudioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -137,7 +137,7 @@ const LiveView: React.FC = () => {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const historyText = chatHistory.map(t => `${t.role}: ${t.text}`).join('\n');
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview',
+        model: 'gemini-2.5-pro-preview-05-06',
         contents: `Evaluate this interview transcript professionally in plain-text JSON format without any markdown or styling symbols: ${historyText}`,
         config: { responseMimeType: "application/json" }
       });
@@ -207,7 +207,7 @@ const LiveView: React.FC = () => {
             setIsActive(true);
             setIsInitializing(false);
             setStatusMessage('Assessment Active');
-            
+
             const source = inputAudioContextRef.current!.createMediaStreamSource(stream);
             const scriptProcessor = inputAudioContextRef.current!.createScriptProcessor(4096, 1, 1);
             scriptProcessor.onaudioprocess = (e) => {
@@ -315,7 +315,7 @@ const LiveView: React.FC = () => {
                 </div>
               )}
               <button onClick={startSession} className="px-10 py-4 bg-[#13c8ec] text-[#0b1619] font-bold uppercase text-xs tracking-widest rounded transition-premium hover:bg-white active:scale-95 shadow-lg shadow-[#13c8ec]/20">Initiate Link</button>
-              
+
               {showAnalysis && finalReport && (
                 <div className="mt-12 text-left glass-dark p-8 rounded-2xl border border-white/5 animate-in fade-in slide-in-from-bottom-4">
                   <h3 className="text-[#13c8ec] text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-center">Previous Audit Report</h3>
@@ -348,8 +348,8 @@ const LiveView: React.FC = () => {
               <canvas ref={canvasRef} className="hidden" />
               {isInitializing && (
                 <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-center p-12">
-                   <div className="w-16 h-16 border-t-2 border-[#13c8ec] rounded-full animate-spin mb-6"></div>
-                   <p className="text-xs uppercase font-bold tracking-[0.4em] text-[#13c8ec]">Handshaking Protocol...</p>
+                  <div className="w-16 h-16 border-t-2 border-[#13c8ec] rounded-full animate-spin mb-6"></div>
+                  <p className="text-xs uppercase font-bold tracking-[0.4em] text-[#13c8ec]">Handshaking Protocol...</p>
                 </div>
               )}
             </>

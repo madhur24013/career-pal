@@ -164,7 +164,7 @@ const ChatView: React.FC = () => {
         });
       }
 
-      const modelName = thinking ? 'gemini-3-pro-preview' : 'gemini-3-flash-preview';
+      const modelName = thinking ? 'gemini-2.5-pro-preview-05-06' : 'gemini-2.5-flash-preview-04-17';
 
       const chat = ai.chats.create({
         model: modelName,
@@ -177,7 +177,7 @@ const ChatView: React.FC = () => {
 
       // FIX: The `message` property in `chat.sendMessage` expects a `Part` or `Part[]`. 
       // Passing `{ message: parts }` ensures it matches the expected `PartUnion[]` structure.
-      const response = await callWithRetry(() => chat.sendMessage(parts));
+      const response = await callWithRetry(() => chat.sendMessage({ message: parts }));
 
       const urls = response.candidates?.[0]?.groundingMetadata?.groundingChunks
         ?.filter(c => c.web)
@@ -201,8 +201,7 @@ const ChatView: React.FC = () => {
       let displayError = "I am having trouble connecting right now. Please try your message again shortly.";
 
       if (msg.includes('quota') || msg.includes('429')) {
-        displayError = "The system has reached its current limit. To continue with uninterrupted analysis, please provide a personal API key from a paid project.";
-        if ((window as any).aistudio) setShowKeyPrompt(true);
+        displayError = "The system has reached its current usage limit. Please try again later.";
       }
 
       setMessages(prev => [...prev, {
@@ -230,8 +229,8 @@ const ChatView: React.FC = () => {
           <button
             onClick={() => setIsThinkingMode(!isThinkingMode)}
             className={`flex items-center gap-2 px-4 py-1.5 rounded-md transition-all border active:scale-95 ${isThinkingMode
-                ? 'bg-purple-500/10 border-purple-500/40 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.2)]'
-                : 'bg-transparent border-transparent text-slate-600 hover:text-slate-400'
+              ? 'bg-purple-500/10 border-purple-500/40 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.2)]'
+              : 'bg-transparent border-transparent text-slate-600 hover:text-slate-400'
               }`}
           >
             <i className={`fas fa-brain text-[10px] ${isThinkingMode ? 'animate-pulse' : ''}`}></i>
@@ -261,8 +260,8 @@ const ChatView: React.FC = () => {
           return (
             <div key={msg.id} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} animate-in fade-in duration-500`}>
               <div className={`relative max-w-[85%] md:max-w-[70%] transition-all ${msg.role === 'user'
-                  ? 'bg-[#101f22]/90 border-white/10 text-slate-300 border px-8 py-6 rounded-2xl shadow-xl'
-                  : 'glass-dark text-slate-200 border border-white/5 px-8 py-6 rounded-2xl shadow-xl'
+                ? 'bg-[#101f22]/90 border-white/10 text-slate-300 border px-8 py-6 rounded-2xl shadow-xl'
+                : 'glass-dark text-slate-200 border border-white/5 px-8 py-6 rounded-2xl shadow-xl'
                 }`}>
                 {msg.role === 'assistant' && (
                   <div className="absolute top-4 right-4 flex gap-2">
@@ -369,10 +368,10 @@ const ChatView: React.FC = () => {
                   onClick={sendMessage}
                   disabled={isLoading || (!inputText.trim() && !attachedResume)}
                   className={`px-12 py-3.5 rounded-xl transition-all duration-500 font-black text-[11px] uppercase tracking-widest active:scale-95 relative overflow-hidden ${isLoading
-                      ? 'bg-slate-800 text-slate-500 cursor-wait'
-                      : isThinkingMode
-                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20'
-                        : 'bg-[#13c8ec] text-[#0b1619] shadow-lg shadow-[#13c8ec]/20'
+                    ? 'bg-slate-800 text-slate-500 cursor-wait'
+                    : isThinkingMode
+                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20'
+                      : 'bg-[#13c8ec] text-[#0b1619] shadow-lg shadow-[#13c8ec]/20'
                     }`}
                 >
                   {isLoading ? (
