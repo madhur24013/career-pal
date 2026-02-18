@@ -1,0 +1,9 @@
+{
+  "name": "CareerPal | Your Friendly Career Sidekick",
+  "description": "A warm and helpful space for resume tips, cool professional pictures, and friendly interview practice.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
