@@ -164,7 +164,7 @@ const ChatView: React.FC = () => {
         });
       }
 
-      const modelName = thinking ? 'gemini-2.5-pro-preview-05-06' : 'gemini-2.5-flash-preview-04-17';
+      const modelName = thinking ? 'gemini-2.0-flash' : 'gemini-2.0-flash';
 
       const chat = ai.chats.create({
         model: modelName,
